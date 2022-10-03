@@ -1,4 +1,5 @@
 using namespace std;
+#include<stdio.h>
 #include<bits/stdc++.h>
 #define R 1
 #define L -1
@@ -12,7 +13,7 @@ int find_min(int a, int b){
     }
 }
 
-void count_num(int *value, int start, int end, int *num, int *left, int *right){
+void count_num(int *value, int start, int end, long long *num, int *left, int *right){
     if(start == end){
         return;
     }
@@ -21,10 +22,12 @@ void count_num(int *value, int start, int end, int *num, int *left, int *right){
     int left_index = 0;
     int right_index = 1;
     int left_or_right = L;
-    while((left_or_right == L && left_index <= mid - start) || (left_or_right == R && right_index <= end - mid)){
+    while(left_index + right_index <= end - start + 1){
         if(left_or_right == L){
-            if(min <= value[mid - left_index]){
-                printf("%d\n", value[mid - left_index]);
+            if(mid - left_index < start){
+                left_or_right = R;
+            }
+            else if(min <= value[mid - left_index]){
                 left[value[mid - left_index]]++;
                 if(value[mid - left_index] + min <= 100000){
                     *num += right[value[mid - left_index] + min];
@@ -39,7 +42,6 @@ void count_num(int *value, int start, int end, int *num, int *left, int *right){
                 if(value[mid + right_index] < min){
                     if(value[mid - left_index] > value[mid + right_index]){
                         min = value[mid - left_index];
-                        //left_index--;
                         left_or_right = L;
                     }
                     else{
@@ -49,7 +51,6 @@ void count_num(int *value, int start, int end, int *num, int *left, int *right){
                 }
                 else if(right_index == end - mid + 1){
                     min = value[mid - left_index];
-                    //left_index--;
                     left_or_right = L;
                 }
                 else{
@@ -58,8 +59,10 @@ void count_num(int *value, int start, int end, int *num, int *left, int *right){
             }
         }
         else if(left_or_right == R){
-            if(min <= value[mid + right_index]){
-                printf("%d\n", value[mid + right_index]);
+            if(mid + right_index > end){
+                left_or_right = L;
+            }
+            else if(min <= value[mid + right_index]){
                 right[value[mid + right_index]]++;
                 if(value[mid + right_index] + min <= 100000){
                     *num += left[value[mid + right_index] + min];
@@ -78,13 +81,11 @@ void count_num(int *value, int start, int end, int *num, int *left, int *right){
                     }
                     else{
                         min = value[mid + right_index];
-                        //right_index--;
                         left_or_right = R;
                     }
                 }
                 else if(left_index == mid - start + 1){
                     min = value[mid + right_index];
-                    //right_index--;
                     left_or_right = R;
                 }
                 else{
@@ -92,16 +93,6 @@ void count_num(int *value, int start, int end, int *num, int *left, int *right){
                 }
             }
         }
-        for(int i = 1; i <= 9; i++){
-            printf("%d ", left[i]);
-        }
-        printf("\n");
-        for(int i = 1; i <= 9; i++){
-            printf("%d ", right[i]);
-        }
-        printf("\n");
-        printf("num: %d min: %d\n", *num, min);
-        printf("\n");
     }
     for(int i = start; i <= end; i++){
         if(i <= mid){
@@ -122,11 +113,11 @@ int main(){
     for(int i = 0; i < n; i++){
         scanf("%d", &value[i]);
     }
-    int *left = (int *)calloc(100001, sizeof(int));
-    int *right = (int *)calloc(100001, sizeof(int));
-    int num = 0;
+    int *left = (int *)calloc(200001, sizeof(int));
+    int *right = (int *)calloc(200001, sizeof(int));
+    long long num = 0;
     count_num(value, 0, n-1, &num, left, right);
-    printf("%d", num);
+    printf("%lld", num);
 
     return 0;
 }
